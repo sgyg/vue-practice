@@ -5,45 +5,42 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>动态组件</title>
+    <title>查漏补缺</title>
   </head>
   <body>
     <div id="root"></div>
   </body>
   <script>
+    // v-once 让某一个元素标签只渲染一次
+    // ref 获取 Dom 节点
+    // 多层组件传值 provide/inject
     const app = Vue.createApp({
       data() {
         return {
-          currentItem: "input-item"
+          count: 1
         }
       },
-      methods: {
-        handleClick() {
-          if (this.currentItem === "input-item") {
-            this.currentItem = "common-item"
-          } else {
-            this.currentItem = "input-item"
-          }
+      provide() {
+        return {
+          count: this.count
         }
       },
       template: `
-        <keep-alive>
-          <component :is="currentItem"></component>
-        </keep-alive>
-        <button @click="handleClick">切换</button>
+        <div-item :count="count">
       `
     })
 
-    app.component("input-item", {
+    app.component("div-item", {
       template: `
-      <input />
+      <div-child-item></div-child-item>
     `
     })
 
-    app.component("common-item", {
+    app.component("div-child-item", {
+      inject: ['count'],
       template: `
-      <div>hello world</div>
-    `
+        <div>{{count}}</div>
+      `
     })
 
     app.mount("#root")
