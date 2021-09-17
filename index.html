@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>vue单组件，单元素 动画及过渡</title>
+    <title>vue单组件，单元素 使用js实现动画</title>
     <style>
       @keyframes shake {
         0% {
@@ -25,20 +25,6 @@
       .v-leave-active {
         animation: shake 3s;
       }
-
-      /* .v-enter-from {
-        opacity: 0;
-      }
-      .v-enter-active,
-      .v-leave-active {
-        transition: opacity 3s ease-out;
-      }
-      .v-enter-to{
-        opacity: 1;
-      }
-      .v-leave-to{
-        opacity: 0;
-      } */
     </style>
   </head>
   <body>
@@ -54,11 +40,36 @@
       methods: {
         handleClick() {
           this.show = !this.show
+        },
+        handleBeforeEnter(el) {
+          el.style.color = "red"
+        },
+        handleEnter(el, done) {
+          const timers = setInterval(()=> {
+            const color = el.style.color
+            if(color === 'red'){
+              el.style.color = 'green'
+            } else {
+              el.style.color = 'red'
+            }
+          }, 1000)
+          setTimeout(()=>{
+            clearInterval(timers)
+            done()
+          },5000)
+        },
+        handleAfterEnter() {
+          alert(124)
         }
       },
       template: `
         <div>
-          <transition>
+          <transition
+            :css="false"
+            @before-enter="handleBeforeEnter"
+            @enter="handleEnter"
+            @after-enter="handleAfterEnter"
+          >
             <div v-if="show">hello world</div>
           </transition>
           <button @click="handleClick">切换</button>
