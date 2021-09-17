@@ -5,25 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>vue单组件，单元素 使用js实现动画</title>
+    <title>vue动画及过渡 多个单元素标签之间的切换</title>
     <style>
-      @keyframes shake {
-        0% {
-          transform: translateX(-100px);
-        }
-        50% {
-          transform: translateX(-50px);
-        }
-        100% {
-          transform: translateX(50px);
-        }
-      }
-      .v-enter-active{
-        animation: shake 3s;
+      .no-mode-fade-enter-active,
+      .no-mode-fade-leave-active {
+        transition: opacity 0.5s;
       }
 
-      .v-leave-active {
-        animation: shake 3s;
+      .no-mode-fade-enter-from,
+      .no-mode-fade-leave-to {
+        opacity: 0;
       }
     </style>
   </head>
@@ -31,48 +22,30 @@
     <div id="root"></div>
   </body>
   <script>
+    // 多个单元素标签之间的切换
+    // 多个单组件之间的切换
     const app = Vue.createApp({
       data() {
         return {
-          show: false
+          show: false,
+          on: true
         }
       },
       methods: {
         handleClick() {
           this.show = !this.show
-        },
-        handleBeforeEnter(el) {
-          el.style.color = "red"
-        },
-        handleEnter(el, done) {
-          const timers = setInterval(()=> {
-            const color = el.style.color
-            if(color === 'red'){
-              el.style.color = 'green'
-            } else {
-              el.style.color = 'red'
-            }
-          }, 1000)
-          setTimeout(()=>{
-            clearInterval(timers)
-            done()
-          },5000)
-        },
-        handleAfterEnter() {
-          alert(124)
         }
       },
       template: `
-        <div>
-          <transition
-            :css="false"
-            @before-enter="handleBeforeEnter"
-            @enter="handleEnter"
-            @after-enter="handleAfterEnter"
-          >
-            <div v-if="show">hello world</div>
+        <div id="demo">
+          <transition name="no-mode-fade" mode="out-in" appear>
+            <button v-if="on" key="on" @click="on = false">
+              on
+            </button>
+            <button v-else key="off" @click="on = true">
+              off
+            </button>
           </transition>
-          <button @click="handleClick">切换</button>
         </div>
       `
     })
