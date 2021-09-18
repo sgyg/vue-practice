@@ -5,16 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>vue动画及过渡 多个单元素标签之间的切换</title>
+    <title>列表动画</title>
     <style>
-      .no-mode-fade-enter-active,
-      .no-mode-fade-leave-active {
-        transition: opacity 0.5s;
+      .list-leave-to .list-enter-from {
+        opacity: 0;
+        transform: translateY(30px);
       }
 
-      .no-mode-fade-enter-from,
-      .no-mode-fade-leave-to {
+      .list-leave-active, .list-enter-active {
+        transition: all 1s ease;
+      }
+
+      .list-leave-from, .list-enter-to {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+      .list-enter-active,
+      .list-leave-active {
+        transition: all 1s ease;
+      }
+      .list-enter-from,
+      .list-leave-to {
         opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .list-move {
+        transition: all 1s ease;
+      }
+
+      .list-item {
+        display: inline-block;
+        margin-right: 10px;
       }
     </style>
   </head>
@@ -22,30 +44,27 @@
     <div id="root"></div>
   </body>
   <script>
-    // 多个单元素标签之间的切换
-    // 多个单组件之间的切换
     const app = Vue.createApp({
       data() {
         return {
-          show: false,
-          on: true
+          show: [1, 2, 3, 4]
         }
       },
       methods: {
         handleClick() {
-          this.show = !this.show
+          this.show.unshift(this.show.length + 1)
+        },
+        handleOutClick() {
+          this.show.shift(this.show.length + 1)
         }
       },
       template: `
         <div id="demo">
-          <transition name="no-mode-fade" mode="out-in" appear>
-            <button v-if="on" key="on" @click="on = false">
-              on
-            </button>
-            <button v-else key="off" @click="on = true">
-              off
-            </button>
-          </transition>
+          <transition-group name="list">
+            <span class="list-item" v-for="item in show" :key="item">{{item}}</span>
+          </transition-group>
+          <button @click="handleClick">增加</button>
+          <button @click="handleOutClick">移除</button>
         </div>
       `
     })
