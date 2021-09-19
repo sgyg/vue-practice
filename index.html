@@ -5,74 +5,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>状态动画</title>
-    <style>
-      .list-leave-to .list-enter-from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-
-      .list-leave-active,
-      .list-enter-active {
-        transition: all 1s ease;
-      }
-
-      .list-leave-from,
-      .list-enter-to {
-        opacity: 1;
-        transform: translateY(0px);
-      }
-      .list-enter-active,
-      .list-leave-active {
-        transition: all 1s ease;
-      }
-      .list-enter-from,
-      .list-leave-to {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-
-      .list-move {
-        transition: all 1s ease;
-      }
-
-      .list-item {
-        display: inline-block;
-        margin-right: 10px;
-      }
-    </style>
+    <title>mixin</title>
+    <style></style>
   </head>
   <body>
     <div id="root"></div>
   </body>
   <script>
+    // mixin 混入
+    // 组件 data, methods 优先级高于 mixin data, methods 优先级
+    // 生命周期函数, 先执行 mixin 里面的, 再执行组件里面的
+    // 自定义的属性, 组件中的属性优先级高于 mixin 属性的优先级
+    const mixin = {
+      data() {
+        return {
+          number: 2
+        }
+      }
+    }
     const app = Vue.createApp({
+      mixins: [mixin],
       data() {
         return {
           number: 1,
-          animateNumber: 1
         }
       },
       methods: {
-        handleClick() {
-          this.number = 10
-          let currentNumber = this.animateNumber
-          if (this.animateNumber < this.number) {
-            const animation = setInterval(() => {
-              currentNumber += 1
-              this.animateNumber += 1
-              if (this.animateNumber === this.number) {
-                clearInterval(animation)
-              }
-            }, 100)
-          }
-        }
+        
       },
       template: `
-        <div id="demo">
-          <div>{{ animateNumber }}</div>
-          <button @click="handleClick">增加</button>
-        </div>
+        <div>{{number}}</div>
       `
     })
     app.mount("#root")
