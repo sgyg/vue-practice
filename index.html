@@ -5,52 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>teleport 传送门</title>
-    <style>
-      .area{
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 200px;
-        height: 300px;
-        background: green;
-      }
-      .mask{
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        background: #000;
-        opacity: .5;
-      }
-    </style>
+    <title>render function</title>
   </head>
   <body>
     <div id="root"></div>
   </body>
   <script>
-    // 传送门 teleport
+    // render function
+    // template -> render -> h -> 虚拟 DOM -> 真实 DOM -> 展示到页面上
     const app = Vue.createApp({
-      data() {
-        return {
-          show: false
-        }
-      },
-      methods: {
-        handleBtnClick(){
-          this.show = !this.show
-        }
-      },
       template: `
-        <div class="area">
-          <button @click="handleBtnClick">按钮</button>
-          <teleport to="body">
-            <div class="mask" v-show="show"></div>
-          </teleport>
-        </div>
+        <my-title :level="1">
+          hello world
+        </my-title>
       `
+    })
+
+    app.component('my-title', {
+      props: ['level'],
+      render() {
+        const { h } = Vue
+        // 虚拟 DOM
+        // h函数 第一个参数是标签的意思，第二个参数值的是标签的属性，第三个参数节点对应的内容是什么
+        return h('h'+this.level, {}, this.$slots.default())
+      },
     })
 
     const vm =  app.mount("#root")
