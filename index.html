@@ -5,10 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>directive自定义指令</title>
+    <title>teleport 传送门</title>
     <style>
-      .header {
+      .area{
         position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 300px;
+        background: green;
+      }
+      .mask{
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        background: #000;
+        opacity: .5;
       }
     </style>
   </head>
@@ -16,34 +31,27 @@
     <div id="root"></div>
   </body>
   <script>
-    // 自定义指令 directive
+    // 传送门 teleport
     const app = Vue.createApp({
       data() {
         return {
-          distance: 100
+          show: false
+        }
+      },
+      methods: {
+        handleBtnClick(){
+          this.show = !this.show
         }
       },
       template: `
-        <div>
-          <div v-pos:left='distance' class="header">
-            <input />
-          </div>
+        <div class="area">
+          <button @click="handleBtnClick">按钮</button>
+          <teleport to="body">
+            <div class="mask" v-show="show"></div>
+          </teleport>
         </div>
       `
     })
-
-    app.directive('pos', (el, binding) => {
-      el.style[binding.arg] = (binding.value + 'px')
-    })
-
-    // app.directive('pos', {
-    //   mounted(el, binding) {
-    //     el.style.top = binding.value + 'px'
-    //   },
-    //   updated(el, binding) {
-    //     el.style.top = binding.value + 'px'
-    //   },
-    // })
 
     const vm =  app.mount("#root")
   </script>
