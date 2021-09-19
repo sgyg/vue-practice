@@ -5,18 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>列表动画</title>
+    <title>状态动画</title>
     <style>
       .list-leave-to .list-enter-from {
         opacity: 0;
         transform: translateY(30px);
       }
 
-      .list-leave-active, .list-enter-active {
+      .list-leave-active,
+      .list-enter-active {
         transition: all 1s ease;
       }
 
-      .list-leave-from, .list-enter-to {
+      .list-leave-from,
+      .list-enter-to {
         opacity: 1;
         transform: translateY(0px);
       }
@@ -47,24 +49,29 @@
     const app = Vue.createApp({
       data() {
         return {
-          show: [1, 2, 3, 4]
+          number: 1,
+          animateNumber: 1
         }
       },
       methods: {
         handleClick() {
-          this.show.unshift(this.show.length + 1)
-        },
-        handleOutClick() {
-          this.show.shift(this.show.length + 1)
+          this.number = 10
+          let currentNumber = this.animateNumber
+          if (this.animateNumber < this.number) {
+            const animation = setInterval(() => {
+              currentNumber += 1
+              this.animateNumber += 1
+              if (this.animateNumber === this.number) {
+                clearInterval(animation)
+              }
+            }, 100)
+          }
         }
       },
       template: `
         <div id="demo">
-          <transition-group name="list">
-            <span class="list-item" v-for="item in show" :key="item">{{item}}</span>
-          </transition-group>
+          <div>{{ animateNumber }}</div>
           <button @click="handleClick">增加</button>
-          <button @click="handleOutClick">移除</button>
         </div>
       `
     })
