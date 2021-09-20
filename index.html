@@ -1,54 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="CH">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>开发插件 plugin</title>
+    <title>setup,reactive</title>
   </head>
   <body>
     <div id="root"></div>
   </body>
   <script>
-    // 对数据做校验的插件
+    // ref 处理基础类型数据
+    // reactive 处理非基础类型数据
     const app = Vue.createApp({
-      data() {
-        return {
-          name: "susu",
-          age: 18
-        }
-      },
-      rule: {
-        age: {
-          validate: age => age < 25,
-          message: "太年轻了"
-        },
-        name: {
-          validate: name => name.length < 4,
-          message: "名字太长"
-        }
-      },
       template: `
-        <div>name:{{name}},age:{{age}}</div>
-      `
-    })
-    const validatePlugin = (app, options) => {
-      app.mixin({
-        created() {
-          for (let key in this.$options.rule) {
-            const item = this.$options.rule[key]
-            this.$watch(key, val => {
-              const result = item.validate(val)
-              if (result) {
-                console.log(item.message)
-              }
-            })
-          }
+        <div>{{nameObj.name}}</div>
+        <div>{{copyNameObj.name}}</div>
+      `,
+      setup(props) {
+        // const {ref} = Vue
+        // let name = ref('susu')
+        // setTimeout(() => {
+        //   name.value = 'simida'
+        // },2000)
+        const {reactive, readonly } = Vue
+        let nameObj  = reactive({name: 'susu'})
+        const copyNameObj = readonly(nameObj)
+        setTimeout(()=>{
+          nameObj.name = "simida"
+          copyNameObj.name = '1234'
+        },2000)
+        return {
+          nameObj,
+          copyNameObj
         }
-      })
-    }
-    app.use(validatePlugin)
+      }
+    })
     const vm = app.mount("#root")
   </script>
 </html>
