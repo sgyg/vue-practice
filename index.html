@@ -5,46 +5,50 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <title>插件 plugin</title>
+    <title>开发插件 plugin</title>
   </head>
   <body>
     <div id="root"></div>
   </body>
   <script>
-    // plugin 插件，把通用的共能封装起来
-    // 定义插件
-    const myPlugin = {
-      install(app){
-        app.provide('name', 'susu')
-        app.directive('focus', {
-          mounted(el){
-            el.focus()
-          }
-        })
-        app.mixin({
-          mounted(){
-            console.log('mixin');
-          }
-        })
-        // 定义全局私有属性
-        app.config.globalProperties.$sayHello = 'hello world'
-      }
-    }
+    // 对数据做校验的插件
     const app = Vue.createApp({
+      data() {
+        return {
+          name: "susu",
+          age: 18
+        }
+      },
+      rule: {
+        age: {
+          validate: age => age < 25,
+          message: "太年轻了"
+        },
+        name: {
+          validate: name => name.length < 4,
+          message: "名字太长"
+        }
+      },
       template: `
-        <div>{{$sayHello}}</div>
-        <my-title />
-        <input v-focus/>
+        <div>name:{{name}},age:{{age}}</div>
       `
     })
-
-    app.component('my-title', {
-      inject: ['name'],
-      template: `<div>{{name}}</div>`
-    })
-
-    app.use(myPlugin)
-
-    const vm =  app.mount("#root")
+    const validatePlugin = (app, options) => {
+      app.mixin({
+        created() {
+          for (let key in this.$options.rule) {
+            const item = this.$options.rule[key]
+            this.$watch(key, val => {
+              const result = item.validate(val)
+              if (result) {
+                console.log(item.message)
+              }
+            })
+          }
+        }
+      })
+    }
+    app.use(validatePlugin)
+    const vm = app.mount("#root")
   </script>
 </html>
